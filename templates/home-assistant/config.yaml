@@ -1,0 +1,5 @@
+name: Home Assistant
+description: |
+  Complete Home Automation System
+version: "0.50.2-rancher1"
+category: Automation

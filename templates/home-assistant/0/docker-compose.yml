@@ -1,0 +1,73 @@
+version: '2'
+services:
+  mariadb:
+    image: mariadb:10.2
+    environment:
+      MYSQL_ROOT_PASSWORD: root-password
+      MYSQL_DATABASE: hass
+      MYSQL_USER: hass
+    stdin_open: true
+    network_mode: host
+    tty: true
+    ports:
+    - 3306:3306/tcp
+    labels:
+      io.rancher.container.pull_image: always
+  appdaemon:
+    image: acockburn/appdaemon:latest
+    environment:
+      HA_URL: http://localhost:8123
+      HA_KEY: ncc1701e
+      DASH_URL: http://192.168.128.220:5050
+    stdin_open: true
+    network_mode: host
+    volumes:
+    - /opt/appdaemon:/conf
+    tty: true
+    links:
+    - home-assistant:hass
+    ports:
+    - 5050:5050/tcp
+    labels:
+      io.rancher.container.pull_image: always
+  rtl2mqtt:
+    privileged: true
+    image: roflmao/rtl2mqtt
+    devices:
+    - /dev/sdr:/dev/sdr:rwm
+    stdin_open: true
+    network_mode: host
+    volumes:
+    - /opt/rtl2mqtt:/scripts
+    tty: true
+    links:
+    - rabbitmq:rabbitmq
+    labels:
+      io.rancher.container.pull_image: always
+  home-assistant:
+    image: homeassistant/home-assistant:0.51.2
+    devices:
+    - /dev/zwave:/dev/zwave:rwm
+    stdin_open: true
+    network_mode: host
+    volumes:
+    - /opt/homeassistant:/config
+    - /etc/localtime:/etc/localtime:ro
+    tty: true
+    links:
+    - mariadb:mariadb
+    - rabbitmq:rabbitmq
+    ports:
+    - 8123:8123/tcp
+    labels:
+      io.rancher.container.pull_image: always
+  rabbitmq:
+    image: cyrilix/rabbitmq-mqtt
+    stdin_open: true
+    network_mode: host
+    tty: true
+    ports:
+    - 15672:15672/tcp
+    - 1883:1883/tcp
+    labels:
+      io.rancher.container.pull_image: always
