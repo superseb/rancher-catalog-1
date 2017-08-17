@@ -1,0 +1,8 @@
+name: Home Assistant
+description: |
+  Complete Home Automation System
+version: "0.50.2"
+category: Automation
+maintainer: Chris Kacerguis
+license: MIT
+projectURL: http://home-assistant.io
