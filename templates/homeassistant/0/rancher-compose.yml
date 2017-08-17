@@ -1,4 +1,8 @@
 version: '2'
+catalog:
+  name: "Home Assistant"
+  version: "0.50.2"
+  description: "Complete Home Automation System"
 services:
   mariadb:
     scale: 1
